@@ -93,11 +93,23 @@ class IndividualTestClassifier:
     def _is_bundle_by_key_count(record: RawCatalogRecord) -> bool:
         """
         Exclude if record spans >= threshold distinct categories AND has no
-        test_type that suggests it is actually a standalone multi-dimension test.
-        Note: Global Skills Development Report (6 keys, type D) is a known
-        legitimate individual product — the test_type='D' guard handles it.
+        test_type or name signal that suggests it is actually a standalone
+        multi-dimension test or report product.
+
+        Note: Global Skills Development Report (6 keys, null test_type in the
+        catalog JSON) and similar report/addon products are legitimate individual
+        non-bundle products. The original guard assumed test_type='D' would
+        always be populated for such items but the catalog JSON may have
+        test_type=null. We add a name-based guard: any product with 'report'
+        in its name is a standalone report product, not a bundled job solution,
+        and is always included regardless of key count.
         """
         if len(record.keys) < _BUNDLE_KEYS_THRESHOLD:
+            return False
+        # Report products (e.g. "Global Skills Development Report", "OPQ
+        # Universal Competency Report 2.0") are standalone individual products,
+        # not pre-packaged job solution bundles, even if they have many keys.
+        if "report" in record.name.lower():
             return False
         # If it has a single-char test_type it is likely a standalone report product
         tt = (record.test_type or "").strip()
