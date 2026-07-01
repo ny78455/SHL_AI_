@@ -7,7 +7,7 @@ The SHL Conversational Assessment Recommender is a stateless, production-grade F
 
 ## Deployment
 
-Application endpoint link - [https://shl-assessment-recommender-production-a2cc.up.railway.app](<Backend Endpoint>)
+Application endpoint link - [https://shl-assessment-recommender-production-a2cc.up.railway.app]
 
 ---
 
